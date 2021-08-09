@@ -28,6 +28,18 @@ router.get('/logFile', function(req, res) {
   });
 });
  
+/* GET LOG ENTRY FILE BASED ON FILE NAME */
+/* BAD FUNCTION - TRIGGERS TAINT ANALYSIS */
+router.post('/logFileWrite', function(req, res) {
+  var logFileName = req.query.file || 'standard_log.log';
+
+    
+  var logfile = fs.readFile(logFileName, "utf8", function(err, data) {
+    if (err) throw err;
+    res.render('logEntries', data);
+  });
+});
+
 
 /* GET LOG ENTRIES BASED ON SELECTED NODE */
 /* BAD FUNCTION - TRIGGERS TAINT ANALYSIS */
