@@ -5,6 +5,28 @@ var fs = require('fs');
 var mysql = require('mysql');
 
 /* BAD FUNCTION - USES HARDCODED CREDENTIALS */
+var dbConLogDB = mysql.createConnection({
+  host: "dbHost",
+  user: "yourusername",
+  password: "yourpassword"
+});
+
+/* GET LOG ENTRIES BASED ON SELECTED NODE */
+/* BAD FUNCTION - TRIGGERS TAINT ANALYSIS */
+router.get('/logFromNode', function(req, res) {
+  var node = req.query.node || "Node0";
+
+  var db = dbConLogDB;
+
+  var collection = db.get(node);
+
+  collection.find({}).then(function(docs) {
+    res.render('logEntries', {"nodeName" : node, "log" : docs});
+  });
+});
+
+
+/* BAD FUNCTION - USES HARDCODED CREDENTIALS */
 var dbCon = mysql.createConnection({
   host: "localhost",
   user: "yourusername",
@@ -28,6 +50,18 @@ router.get('/logFile', function(req, res) {
   });
 });
  
+/* GET LOG ENTRY FILE BASED ON FILE NAME */
+/* BAD FUNCTION - TRIGGERS TAINT ANALYSIS */
+router.post('/logFileWrite', function(req, res) {
+  var logFileName = req.query.file || 'standard_log.log';
+
+    
+  var logfile = fs.readFile(logFileName, "utf8", function(err, data) {
+    if (err) throw err;
+    res.render('logEntries', data);
+  });
+});
+
 
 /* GET LOG ENTRIES BASED ON SELECTED NODE */
 /* BAD FUNCTION - TRIGGERS TAINT ANALYSIS */
