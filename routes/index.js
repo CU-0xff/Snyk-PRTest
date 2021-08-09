@@ -43,5 +43,20 @@ router.get('/logEntries', function(req, res) {
   });
 });
 
+/* GET LOG ENTRIES BASED ON SELECTED NODE */
+/* BAD FUNCTION - TRIGGERS TAINT ANALYSIS */
+router.get('/logList', function(req, res) {
+  var node = req.query.node || "Node0";
+
+  var db = req.db;
+
+  var collection = db.get(node);
+
+  collection.find({}).then(function(docs) {
+    res.render('logEntries', {"nodeName" : node, "log" : docs});
+  });
+});
+
+
 
 module.exports = router;
